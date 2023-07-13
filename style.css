@@ -1,0 +1,13 @@
+div {
+    height: 50px;
+    display: flex;  
+    border: black solid 1px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+main {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
