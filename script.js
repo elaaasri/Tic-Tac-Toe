@@ -1,14 +1,5 @@
-let GameboardModule = (function () {
-  // let playersObj = {
-  //   playerOne: {
-  //     name: "player one",
-  //     mark: "X",
-  //   },
-  //   playerTwo: {
-  //     name: "player two",
-  //     mark: "O",
-  //   },
-  // };
+let gameBoardModule = (function () {
+  const allSquares = document.querySelectorAll(".square");
 
   function playerFactory(name, mark) {
     return {
@@ -20,17 +11,21 @@ let GameboardModule = (function () {
   const playerTwo = playerFactory("player two", "O");
 
   const board = [playerOne.mark, playerTwo.mark];
+
   function playerOneRound() {
-    return playerOne.mark;
+    return board[0];
   }
   function playerTwoRound() {
-    return playerTwo.mark;
+    return board[1];
   }
+
   let clickCount = 0;
-  function render() {
-    const allSquares = document.querySelectorAll(".square");
+  function addMarksToSpecificSpots() {
     allSquares.forEach((square) =>
       square.addEventListener("click", function () {
+        // stops players from playing in spots that already taken :
+        if (square.textContent != "") return;
+        // display the mark on the specific spot :
         if (clickCount === 0) {
           square.textContent = playerOneRound();
           clickCount++;
@@ -38,16 +33,13 @@ let GameboardModule = (function () {
           square.textContent = playerTwoRound();
           clickCount = 0;
         }
+        console.log(board);
       })
     );
   }
 
-  function displayController() {
-    render();
-  }
-
   return {
-    displayController,
+    addMarksToSpecificSpots,
   };
 })();
-GameboardModule.displayController();
+gameBoardModule.addMarksToSpecificSpots();
