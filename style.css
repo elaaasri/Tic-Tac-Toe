@@ -1,13 +1,23 @@
 div {
-    height: 50px;
     display: flex;  
     border: black solid 1px;
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(3,1fr);
+    /* background-color: red; */
 }
 main {
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(3,1fr);
+}
+button {
+    height: 50px;
+    border: red solid 1px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+main>div {
+    height: 40px;
 }
