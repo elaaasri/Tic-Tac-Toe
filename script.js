@@ -1,19 +1,26 @@
-const gameBoard = (function () {
-  const board = ["X", "O"];
-  const rows = 3;
-  const columns = 3;
-  const the2Dboard = [
+function gameBoard() {
+  const my2DArray = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
   ];
-  for (let i = 0; i < the2Dboard.length; i++) {
-    for (let j = 0; j < the2Dboard[i].length; j++) {
-      // console.log(the2Dboard[i]);
+  const rows = [];
+  const columns = [];
+
+  // a func to create the 2D board :
+  function createBoard() {
+    const boardContainer = document.querySelector(".board");
+    for (let i = 0; i < my2DArray.length; i++) {
+      for (let j = 0; j < my2DArray[i].length; j++) {
+        const button = document.createElement("button");
+        button.setAttribute("data-value", my2DArray[i][j]);
+        boardContainer.appendChild(button);
+      }
     }
   }
-  return { the2Dboard, board };
-})();
+  createBoard();
+}
+gameBoard();
 
 // players factory for creating new player :
 function playersFactory(name, mark) {
@@ -28,43 +35,15 @@ function playersFactory(name, mark) {
 const playerOne = playersFactory("Player One", "X");
 const playerTwo = playersFactory("Player Two", "O");
 
-function setDataBoard() {
-  const dataBoard = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-  ];
-  for (let i = 0; i < dataBoard.length; i++) {
-    for (let j = 0; j < dataBoard[i].length; j++) {
-      const button = document.createElement("button");
-      const boardContainer = document.querySelector(".board");
-      boardContainer.appendChild(button);
-      button.setAttribute("data-value", dataBoard[i][j]);
-    }
-  }
-}
-setDataBoard();
-
-// function checksForTheWinner() {
-//   const allButtons = document.querySelectorAll("button");
-//   allButtons.forEach((button) => {
-//     button.addEventListener("click", function () {
-//       const buttonDataValue = button.getAttribute("data-value");
-//       console.log(buttonDataValue);
-//     });
-//   });
-// }
-// checksForTheWinner();
-
+// func to add a specific mark to the specific button :
 function addMarksToSpecificSpot() {
   const allButtons = document.querySelectorAll("button");
   let clickCount = 0;
-
   allButtons.forEach((button) =>
     button.addEventListener("click", function () {
-      // stops players from playing in spots that already taken :
-      if (button.textContent != "") return;
       // display the mark on the specific spot :
+      if (button.textContent != "") return;
+      // stops players from playing in spots that already taken :
       if (clickCount === 0) {
         button.textContent = addChoosenMark();
         clickCount++;
@@ -72,10 +51,92 @@ function addMarksToSpecificSpot() {
         button.textContent = getOtherMark();
         clickCount = 0;
       }
+
+      // console.log(button);
+      // if (button.textContent === "X") {
+      //   result.push(buttonDataValue);
+      // }
+
+      // let row = [1, 2, 3];
+      // console.log(result);
+
+      // let filteredResult = [];
+
+      // // console.log(result);
+      // result.forEach((element) => {
+      //   if (element == 1 || element == 2 || element == 3) {
+      //     filteredResult.push(element);
+      //   }
+      // });
+
+      // console.log(filteredResult);
+
+      // let final = filteredResult.sort((a, b) => a - b);
+      // // console.log(final);
+      // if (button.textContent === "X") {
+      //   if (final.toString() == row.toString()) {
+      //     alert("x wins");
+      //   }
+      // }
     })
   );
 }
 addMarksToSpecificSpot();
+
+function getTheWinner() {
+  let allButtons = document.querySelectorAll("button");
+  let storeDataValue = [];
+
+  allButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const buttonDataValue = Number(button.getAttribute("data-value"));
+      let sortedDataValue = [];
+
+      if (button.textContent === "X") {
+        storeDataValue.push(buttonDataValue);
+      }
+
+      let row = [1, 2, 3];
+      let rowTwo = [4, 5, 6];
+
+      storeDataValue.filter((value) => {
+        row.filter((rowValue) => {
+          if (value === rowValue) {
+            sortedDataValue.push(value);
+          }
+        });
+      });
+
+      sortedDataValue.sort((a, b) => a - b);
+
+      console.log(row);
+      console.log(sortedDataValue);
+
+      if (
+        button.textContent === "X" &&
+        sortedDataValue.toString() === row.toString()
+      ) {
+        alert("x wins");
+      } else if (
+        button.textContent === "O" &&
+        sortedDataValue.toString() === row.toString()
+      ) {
+        alert("o wins");
+      }
+
+      // if (button.textContent === "X") {
+      //   if (sortedDataValue.toString() === row.toString()) {
+      //     alert("x wins");
+      //   }
+      // } else if (button.textContent === "O") {
+      //   if (sortedDataValue.toString() == row.toString()) {
+      //     alert("o wins");
+      //   }
+      // }
+    });
+  });
+}
+getTheWinner();
 
 // func to add the choosen mark :
 const playerOptionSelect = document.getElementById("optionSelect");
@@ -83,9 +144,7 @@ function addChoosenMark() {
   const selectedOption = playerOptionSelect.value;
   return selectedOption === "Player One"
     ? playerOne.getMark()
-    : selectedOption === "Player Two"
-    ? playerTwo.getMark()
-    : "";
+    : playerTwo.getMark();
 }
 playerOptionSelect.addEventListener("click", addChoosenMark);
 
@@ -93,28 +152,28 @@ playerOptionSelect.addEventListener("click", addChoosenMark);
 function getOtherMark() {
   return addChoosenMark() === playerOne.getMark()
     ? playerTwo.getMark()
-    : addChoosenMark() === playerTwo.getMark()
-    ? playerOne.getMark()
-    : "";
+    : playerOne.getMark();
 }
 
-// function render() {
-//   const allbuttons = document.querySelectorAll(".button");
-//   let clickCount = 0;
+// storeDataValue.forEach((element) => {
+//   if (element == 1 || element == 2 || element == 3) {
+//     filteredResult.push(element);
+//   }
+// });
 
-//   allbuttons.forEach((button) =>
-//     button.addEventListener("click", function () {
-//       // stops players from playing in spots that already taken :
-//       if (button.textContent != "") return;
-//       // display the mark on the specific spot :
-//       if (clickCount === 0) {
-//         button.textContent = addChoosenMark();
-//         clickCount++;
-//       } else if (clickCount === 1) {
-//         button.textContent = getOtherMark();
-//         clickCount = 0;
-//       }
-//     })
-//   );
+// console.log(filteredResult);
+
+// let final = filteredResult.sort((a, b) => a - b);
+// // console.log(final);
+// if (button.textContent === "X") {
+//   if (final.toString() == row.toString()) {
+//     alert("x wins");
+//   }
+// } else if (button.textContent === "O") {
+//   if (final.toString() == row.toString()) {
+//     alert("o wins");
+//   }
 // }
-// render();
+
+const test = { name: "zbe", age: 21 };
+console.log(JSON.stringify(test));
