@@ -1,26 +1,38 @@
-function gameBoard() {
-  const my2DArray = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-  ];
+const GameBoard = (function () {
   const rows = [];
   const columns = [];
+  const board = [];
 
-  // a func to create the 2D board :
-  function createBoard() {
-    const boardContainer = document.querySelector(".board");
-    for (let i = 0; i < my2DArray.length; i++) {
-      for (let j = 0; j < my2DArray[i].length; j++) {
-        const button = document.createElement("button");
-        button.setAttribute("data-value", my2DArray[i][j]);
-        boardContainer.appendChild(button);
+  function storeRowsAndColumns() {
+    const my2DArray = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    for (let i in my2DArray) {
+      rows.push(my2DArray[i]);
+      for (let j in my2DArray[i]) {
+        if (!columns[j]) {
+          columns[j] = [];
+        }
+        columns[j].push(my2DArray[i][j]);
+        board.push(my2DArray[i][j]);
       }
     }
   }
-  createBoard();
-}
-gameBoard();
+  storeRowsAndColumns();
+
+  function displayTheBoard() {
+    board.forEach((element) => {
+      const buttonsContainer = document.querySelector("#board-container");
+      const button = document.createElement("button");
+      buttonsContainer.appendChild(button);
+      button.setAttribute("data-value", element);
+    });
+  }
+  displayTheBoard();
+  return { rows, columns };
+})();
 
 // players factory for creating new player :
 function playersFactory(name, mark) {
@@ -39,6 +51,7 @@ const playerTwo = playersFactory("Player Two", "O");
 function addMarksToSpecificSpot() {
   const allButtons = document.querySelectorAll("button");
   let clickCount = 0;
+  const buttonDataArray = [];
   allButtons.forEach((button) =>
     button.addEventListener("click", function () {
       // display the mark on the specific spot :
@@ -51,102 +64,53 @@ function addMarksToSpecificSpot() {
         button.textContent = getOtherMark();
         clickCount = 0;
       }
+      // checkForTheWinner.bind(button)(); // binding the button(this) to checkForTheWinner :
 
-      // console.log(button);
-      // if (button.textContent === "X") {
-      //   result.push(buttonDataValue);
-      // }
+      function checkWinFor_X_() {
+        const allRows = GameBoard.rows;
+        const allColumns = GameBoard.columns;
+        const allDiagonals = GameBoard.diagonals;
 
-      // let row = [1, 2, 3];
-      // console.log(result);
+        const buttonData = Number(button.getAttribute("data-value"));
 
-      // let filteredResult = [];
+        if (button.textContent === "X") {
+          buttonDataArray.push(buttonData);
+        }
 
-      // // console.log(result);
-      // result.forEach((element) => {
-      //   if (element == 1 || element == 2 || element == 3) {
-      //     filteredResult.push(element);
-      //   }
-      // });
+        buttonDataArray.sort((a, b) => a - b);
 
-      // console.log(filteredResult);
+        // Helper function to check if an array contains all elements of another array
+        function containsAll(mainArray, subArray) {
+          return subArray.every((elem) => mainArray.includes(elem));
+        }
 
-      // let final = filteredResult.sort((a, b) => a - b);
-      // // console.log(final);
-      // if (button.textContent === "X") {
-      //   if (final.toString() == row.toString()) {
-      //     alert("x wins");
-      //   }
-      // }
+        const winningCombinations = [...allRows, ...allColumns];
+
+        for (const combination of winningCombinations) {
+          if (containsAll(buttonDataArray, combination)) {
+            console.log("x wins");
+            return;
+          }
+        }
+
+        if (buttonDataArray.length === 5) {
+          console.log("It's a draw!");
+        }
+      }
+      checkWinFor_X_();
     })
   );
 }
 addMarksToSpecificSpot();
 
-function getTheWinner() {
-  let allButtons = document.querySelectorAll("button");
-  let storeDataValue = [];
-
-  allButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-      const buttonDataValue = Number(button.getAttribute("data-value"));
-      let sortedDataValue = [];
-
-      if (button.textContent === "X") {
-        storeDataValue.push(buttonDataValue);
-      }
-
-      let row = [1, 2, 3];
-      let rowTwo = [4, 5, 6];
-
-      storeDataValue.filter((value) => {
-        row.filter((rowValue) => {
-          if (value === rowValue) {
-            sortedDataValue.push(value);
-          }
-        });
-      });
-
-      sortedDataValue.sort((a, b) => a - b);
-
-      console.log(row);
-      console.log(sortedDataValue);
-
-      if (
-        button.textContent === "X" &&
-        sortedDataValue.toString() === row.toString()
-      ) {
-        alert("x wins");
-      } else if (
-        button.textContent === "O" &&
-        sortedDataValue.toString() === row.toString()
-      ) {
-        alert("o wins");
-      }
-
-      // if (button.textContent === "X") {
-      //   if (sortedDataValue.toString() === row.toString()) {
-      //     alert("x wins");
-      //   }
-      // } else if (button.textContent === "O") {
-      //   if (sortedDataValue.toString() == row.toString()) {
-      //     alert("o wins");
-      //   }
-      // }
-    });
-  });
-}
-getTheWinner();
-
 // func to add the choosen mark :
-const playerOptionSelect = document.getElementById("optionSelect");
+const playerOptionSelect = document.querySelector("#optionSelect");
 function addChoosenMark() {
   const selectedOption = playerOptionSelect.value;
   return selectedOption === "Player One"
     ? playerOne.getMark()
     : playerTwo.getMark();
 }
-playerOptionSelect.addEventListener("click", addChoosenMark);
 
 // func to get the other player mark :
 function getOtherMark() {
@@ -155,25 +119,17 @@ function getOtherMark() {
     : playerOne.getMark();
 }
 
-// storeDataValue.forEach((element) => {
-//   if (element == 1 || element == 2 || element == 3) {
-//     filteredResult.push(element);
-//   }
-// });
+// function checkForWin() {
+//   const allRows = GameBoard.rows;
+//   const allColumns = GameBoard.columns;
 
-// console.log(filteredResult);
+//   buttonDataArray.sort((a, b) => a - b);
+//   console.log(buttonDataArray);
 
-// let final = filteredResult.sort((a, b) => a - b);
-// // console.log(final);
-// if (button.textContent === "X") {
-//   if (final.toString() == row.toString()) {
-//     alert("x wins");
-//   }
-// } else if (button.textContent === "O") {
-//   if (final.toString() == row.toString()) {
-//     alert("o wins");
+//   if (button.textContent === "X") {
+//     if (buttonDataArray.toString() == allRows[0].toString()) {
+//       console.log("x wins");
+//     }
 //   }
 // }
-
-const test = { name: "zbe", age: 21 };
-console.log(JSON.stringify(test));
+// checkForWin();
