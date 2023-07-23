@@ -1,9 +1,14 @@
 const GameBoard = (function () {
-  const rows = [];
-  const columns = [];
-  const board = [];
+  const boardData = [];
 
+  // fun to store rows, columns and diagonals :
   function storeRowsAndColumns() {
+    const rows = [];
+    const columns = [];
+    const diagonals = [
+      [1, 5, 9],
+      [3, 5, 7],
+    ];
     const my2DArray = [
       [1, 2, 3],
       [4, 5, 6],
@@ -16,30 +21,33 @@ const GameBoard = (function () {
           columns[j] = [];
         }
         columns[j].push(my2DArray[i][j]);
-        board.push(my2DArray[i][j]);
+        boardData.push(my2DArray[i][j]);
       }
     }
+    return { rows, columns, diagonals };
   }
   storeRowsAndColumns();
 
-  function displayTheBoard() {
-    board.forEach((element) => {
+  // func to create the board and sets data value for each button :
+  function displayTheBoardAndSetsItsData() {
+    boardData.forEach((data) => {
       const buttonsContainer = document.querySelector("#board-container");
       const button = document.createElement("button");
       buttonsContainer.appendChild(button);
-      button.setAttribute("data-value", element);
+      button.setAttribute("data-value", data);
     });
   }
-  displayTheBoard();
-  return { rows, columns };
+  displayTheBoardAndSetsItsData();
+
+  return { storeRowsAndColumns };
 })();
 
-// players factory for creating new player :
+// factory func to create new players :
 function playersFactory(name, mark) {
-  const getName = function () {
+  const getName = () => {
     return name;
   };
-  const getMark = function () {
+  const getMark = () => {
     return mark;
   };
   return { getName, getMark };
@@ -51,12 +59,11 @@ const playerTwo = playersFactory("Player Two", "O");
 function addMarksToSpecificSpot() {
   const allButtons = document.querySelectorAll("button");
   let clickCount = 0;
-  const buttonDataArray = [];
   allButtons.forEach((button) =>
     button.addEventListener("click", function () {
-      // display the mark on the specific spot :
-      if (button.textContent != "") return;
       // stops players from playing in spots that already taken :
+      if (button.textContent != "") return;
+      // display the mark on the specific spot :
       if (clickCount === 0) {
         button.textContent = addChoosenMark();
         clickCount++;
@@ -64,40 +71,7 @@ function addMarksToSpecificSpot() {
         button.textContent = getOtherMark();
         clickCount = 0;
       }
-      // checkForTheWinner.bind(button)(); // binding the button(this) to checkForTheWinner :
-
-      function checkWinFor_X_() {
-        const allRows = GameBoard.rows;
-        const allColumns = GameBoard.columns;
-        const allDiagonals = GameBoard.diagonals;
-
-        const buttonData = Number(button.getAttribute("data-value"));
-
-        if (button.textContent === "X") {
-          buttonDataArray.push(buttonData);
-        }
-
-        buttonDataArray.sort((a, b) => a - b);
-
-        // Helper function to check if an array contains all elements of another array
-        function containsAll(mainArray, subArray) {
-          return subArray.every((elem) => mainArray.includes(elem));
-        }
-
-        const winningCombinations = [...allRows, ...allColumns];
-
-        for (const combination of winningCombinations) {
-          if (containsAll(buttonDataArray, combination)) {
-            console.log("x wins");
-            return;
-          }
-        }
-
-        if (buttonDataArray.length === 5) {
-          console.log("It's a draw!");
-        }
-      }
-      checkWinFor_X_();
+      checkForWin.bind(button)(); // binding the button to checkForWin.
     })
   );
 }
@@ -119,17 +93,63 @@ function getOtherMark() {
     : playerOne.getMark();
 }
 
-// function checkForWin() {
-//   const allRows = GameBoard.rows;
-//   const allColumns = GameBoard.columns;
+const storeDataFor_X_ = [];
+const storeDataFor_O_ = [];
 
-//   buttonDataArray.sort((a, b) => a - b);
-//   console.log(buttonDataArray);
+function checkForWin() {
+  const allRows = GameBoard.storeRowsAndColumns().rows;
+  const allColumns = GameBoard.storeRowsAndColumns().columns;
+  const allDiagonals = GameBoard.storeRowsAndColumns().diagonals;
+  const button = this; // binding the button to checkForTheWinner.
+  const buttonData = Number(button.getAttribute("data-value"));
+  const allSolutions = [...allRows, ...allColumns, ...allDiagonals];
 
-//   if (button.textContent === "X") {
-//     if (buttonDataArray.toString() == allRows[0].toString()) {
+  if (button.textContent === "X") {
+    storeDataFor_X_.push(buttonData);
+  } else if (button.textContent === "O") {
+    storeDataFor_O_.push(buttonData);
+  }
+
+  // func to check if an array contains all elements of another array :
+  function containsAllElements(mainArray, subArray) {
+    return subArray.every((elem) => mainArray.includes(elem));
+  }
+
+  for (const solution of allSolutions) {
+    if (containsAllElements(storeDataFor_X_, solution)) {
+      console.log("x wins");
+      return;
+    } else if (containsAllElements(storeDataFor_O_, solution)) {
+      console.log("o wins");
+    }
+  }
+}
+
+// checkForWin();
+
+// function checkwin() {
+//   console.log(storeDataFor_X_);
+//   const allRows = GameBoard.storeRowsAndColumns().rows;
+//   const allColumns = GameBoard.storeRowsAndColumns().columns;
+//   const allDiagonals = GameBoard.storeRowsAndColumns().diagonals;
+//   const allSolutions = [...allRows, ...allColumns, ...allDiagonals];
+//   // func to check if an array contains all elements of another array :
+//   function containsAllElements(mainArray, subArray) {
+//     return subArray.every((elem) => mainArray.includes(elem));
+//   }
+//   console.log(storeDataFor_X_);
+
+//   for (const solution of allSolutions) {
+//     if (containsAllElements(storeDataFor_X_, solution)) {
 //       console.log("x wins");
+//       return;
+//     } else if (containsAllElements(storeDataFor_O_, solution)) {
+//       console.log("o wins");
 //     }
+
+//     // if (storeDataFor_X_.length === 5) {
+//     //   console.log("It's a draw!");
+//     // }
 //   }
 // }
-// checkForWin();
+// checkwin();
