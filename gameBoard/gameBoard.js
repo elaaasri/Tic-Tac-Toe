@@ -71,15 +71,15 @@ function addMarksToSpecificSpot() {
         button.textContent = getOtherMark();
         clickCount = 0;
       }
-      checkForWin.bind(button)(); // binding the button to checkForWin.
+      checkForWin.bind(button)(); // binding button to checkForWin.
     })
   );
 }
 addMarksToSpecificSpot();
 
 // func to add the choosen mark :
-const playerOptionSelect = document.querySelector("#optionSelect");
 function addChoosenMark() {
+  const playerOptionSelect = document.querySelector("#optionSelect");
   const selectedOption = playerOptionSelect.value;
   return selectedOption === "Player One"
     ? playerOne.getMark()
@@ -93,21 +93,23 @@ function getOtherMark() {
     : playerOne.getMark();
 }
 
-const storeDataFor_X_ = [];
-const storeDataFor_O_ = [];
+let storeDataForX = [];
+let storeDataForO = [];
 
 function checkForWin() {
+  // declare variables :
+  const button = this;
+  const buttonData = Number(button.getAttribute("data-value"));
   const allRows = GameBoard.storeRowsAndColumns().rows;
   const allColumns = GameBoard.storeRowsAndColumns().columns;
   const allDiagonals = GameBoard.storeRowsAndColumns().diagonals;
-  const button = this; // binding the button to checkForTheWinner.
-  const buttonData = Number(button.getAttribute("data-value"));
   const allSolutions = [...allRows, ...allColumns, ...allDiagonals];
 
+  // conditon to store data for each player :
   if (button.textContent === "X") {
-    storeDataFor_X_.push(buttonData);
+    storeDataForX.push(buttonData);
   } else if (button.textContent === "O") {
-    storeDataFor_O_.push(buttonData);
+    storeDataForO.push(buttonData);
   }
 
   // func to check if an array contains all elements of another array :
@@ -116,40 +118,38 @@ function checkForWin() {
   }
 
   for (const solution of allSolutions) {
-    if (containsAllElements(storeDataFor_X_, solution)) {
+    if (containsAllElements(storeDataForX, solution)) {
       console.log("x wins");
-      return;
-    } else if (containsAllElements(storeDataFor_O_, solution)) {
+      gameOver();
+    } else if (containsAllElements(storeDataForO, solution)) {
       console.log("o wins");
+      gameOver();
     }
+  }
+  console.log(storeDataForX.length);
+  console.log(storeDataForO.length);
+
+  // conditon to check for the tie :
+  if (storeDataForX.length === 5 || storeDataForO.length === 5) {
+    console.log("its a tie");
   }
 }
 
-// checkForWin();
+// func to stop the end the game :
+function gameOver() {
+  const allButtons = document.querySelectorAll("button");
+  allButtons.forEach((button) => {
+    button.style.pointerEvents = "none";
+  });
+}
 
-// function checkwin() {
-//   console.log(storeDataFor_X_);
-//   const allRows = GameBoard.storeRowsAndColumns().rows;
-//   const allColumns = GameBoard.storeRowsAndColumns().columns;
-//   const allDiagonals = GameBoard.storeRowsAndColumns().diagonals;
-//   const allSolutions = [...allRows, ...allColumns, ...allDiagonals];
-//   // func to check if an array contains all elements of another array :
-//   function containsAllElements(mainArray, subArray) {
-//     return subArray.every((elem) => mainArray.includes(elem));
-//   }
-//   console.log(storeDataFor_X_);
+const test = document.querySelector("#test");
+const testSelect = document.querySelector("#test-select");
 
-//   for (const solution of allSolutions) {
-//     if (containsAllElements(storeDataFor_X_, solution)) {
-//       console.log("x wins");
-//       return;
-//     } else if (containsAllElements(storeDataFor_O_, solution)) {
-//       console.log("o wins");
-//     }
+test.addEventListener("click", function () {
+  testSelect.style.display = "flex";
+});
+console.log("zbe");
 
-//     // if (storeDataFor_X_.length === 5) {
-//     //   console.log("It's a draw!");
-//     // }
-//   }
-// }
-// checkwin();
+const zbe = document.querySelectorAll("button");
+console.log(zbe);

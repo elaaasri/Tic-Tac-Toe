@@ -1,0 +1,150 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Permanent Marker', cursive;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #161313;
+    color: white;
+}
+/* header styles */
+h1 {
+    display: flex;
+    height: 130px;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.5rem;
+    font-size: 45px;
+}
+/* main styles */
+main {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+}
+#vs {
+    font-size: 40px;
+}
+#start-game-container {
+    align-self: center;
+}
+#start-game-button {
+    width: 120px;
+    height: 35px;
+    border-radius: 20px;
+    font-weight: bold;
+    border: none;
+    cursor: crosshair;
+    font-family: 'Courier New', Courier, monospace;
+    transition: background-color 0.4s ease;
+    margin-bottom: 30px;
+}
+#start-game-button:hover {
+    background-color: rgb(12, 57, 147);
+}
+#player-one-container,
+#player-two-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 20px;
+    box-shadow: rgba(255, 255,255, 0.5) 0px 5px 15px;
+    width: fit-content;
+    height: fit-content;
+}
+
+input {
+    text-align: center;
+    height: 25px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+img {
+    width: 230px;
+    height: 230px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+div {
+    border: black solid 1px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+} 
+
+
+main {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+button {
+    height: 50px;
+    border: red solid 1px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+form {
+    flex-wrap: wrap;
+    border: black solid 1px;
+    width: min-content;
+    padding: 0;
+    gap: 5px;   
+    padding: 5px;
+} 
+ #nameFormContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  } */
+
+  /* footer styles : */
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    font-size: 11px;
+    font-family: "Poppins", sans-serif;
+}
+.fa-github {
+    color: white;
+    font-size: 20px;
+    transition: transform 0.5s ease-in-out;
+}
+.fa-github:hover {
+    transform: rotate(360deg) scale(1.3);
+}
