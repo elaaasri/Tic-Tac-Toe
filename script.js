@@ -33,8 +33,10 @@ const GameBoard = (function () {
     boardData.forEach((data) => {
       const buttonsContainer = document.querySelector("#board-container");
       const button = document.createElement("button");
+      button.id = "board-buttons";
       buttonsContainer.appendChild(button);
       button.setAttribute("data-value", data);
+      button.textContent = "zbe";
     });
   }
   displayTheBoardAndSetsItsData();
@@ -136,20 +138,58 @@ function checkForWin() {
 }
 
 // func to stop the end the game :
-function gameOver() {
-  const allButtons = document.querySelectorAll("button");
-  allButtons.forEach((button) => {
-    button.style.pointerEvents = "none";
-  });
-}
+// function gameOver() {
+//   const allButtons = document.querySelectorAll("button");
+//   allButtons.forEach((button) => {
+//     button.style.pointerEvents = "none";
+//   });
+// }
 
-const test = document.querySelector("#test");
-const testSelect = document.querySelector("#test-select");
+// const test = document.querySelector("#test");
+// const testSelect = document.querySelector("#test-select");
 
-test.addEventListener("click", function () {
-  testSelect.style.display = "flex";
+// test.addEventListener("click", function () {
+//   testSelect.style.display = "flex";
+// });
+// console.log("zbe");
+
+// const zbe = document.querySelectorAll("button");
+// console.log(zbe);
+
+// const startGameButton = document.getElementById("start-game-button");
+// const landingPageContainer = document.getElementById("landing-page-container");
+// const gameBoardCotainer = document.getElementById("game-board-container");
+// const backButton = document.getElementById("back-button");
+
+// startGameButton.addEventListener("click", function () {
+//   landingPageContainer.style.display = "none";
+//   gameBoardCotainer.style.display = "block";
+// });
+
+// backButton.addEventListener("click", function () {
+//   landingPageContainer.style.display = "block";
+//   gameBoardCotainer.style.display = "none";
+// });
+
+const startGameButton = document.getElementById("start-game-button");
+const closePopupButton = document.getElementById("close-popup-button");
+const popupOverlay = document.getElementById("popup-overlay");
+const popupWindow = document.getElementById("popup-window");
+const playerOneInput = document.getElementById("player-one-input");
+const playerTwoInput = document.getElementById("player-two-input");
+const playerOneOutput = document.getElementById("player-one-output");
+const playerTwoOutput = document.getElementById("player-two-output");
+
+startGameButton.addEventListener("click", () => {
+  popupOverlay.style.display = "flex";
+  popupWindow.style.display = "flex";
+  console.log(playerOneInput.value);
+  console.log(playerTwoInput.value);
+  playerOneOutput.textContent = playerOneInput.value;
+  playerTwoOutput.textContent = playerTwoInput.value;
 });
-console.log("zbe");
 
-const zbe = document.querySelectorAll("button");
-console.log(zbe);
+closePopupButton.addEventListener("click", () => {
+  popupOverlay.style.display = "none";
+  popupWindow.style.display = "none";
+});
