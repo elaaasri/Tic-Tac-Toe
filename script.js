@@ -1,3 +1,15 @@
+// DOM elements :
+const startGameButton = document.getElementById("start-game-button");
+const popupOverlay = document.getElementById("popup-overlay");
+const popupWindow = document.getElementById("popup-window");
+const playerOneInput = document.getElementById("player-one-input");
+const playerTwoInput = document.getElementById("player-two-input");
+const playerOneOutput = document.getElementById("player-one-output");
+const playerTwoOutput = document.getElementById("player-two-output");
+const playAgainButton = document.getElementById("play-again-button");
+const showWinner = document.getElementById("show-winner");
+const closeButton = document.getElementById("close-button");
+
 const GameBoard = (function () {
   const boardData = [];
 
@@ -36,7 +48,6 @@ const GameBoard = (function () {
       button.id = "board-buttons";
       buttonsContainer.appendChild(button);
       button.setAttribute("data-value", data);
-      button.textContent = "zbe";
     });
   }
   displayTheBoardAndSetsItsData();
@@ -54,23 +65,28 @@ function playersFactory(name, mark) {
   };
   return { getName, getMark };
 }
-const playerOne = playersFactory("Player One", "X");
-const playerTwo = playersFactory("Player Two", "O");
+
+// func to assign new players object :
+function assignNewPlayers() {
+  const playerOne = playersFactory(playerOneInput.value, "X");
+  const playerTwo = playersFactory(playerTwoInput.value, "O");
+  return { playerOne, playerTwo };
+}
 
 // func to add a specific mark to the specific button :
+let clickCount = 0;
 function addMarksToSpecificSpot() {
   const allButtons = document.querySelectorAll("button");
-  let clickCount = 0;
   allButtons.forEach((button) =>
     button.addEventListener("click", function () {
       // stops players from playing in spots that already taken :
       if (button.textContent != "") return;
       // display the mark on the specific spot :
       if (clickCount === 0) {
-        button.textContent = addChoosenMark();
+        button.textContent = assignNewPlayers().playerOne.getMark();
         clickCount++;
       } else if (clickCount === 1) {
-        button.textContent = getOtherMark();
+        button.textContent = assignNewPlayers().playerTwo.getMark();
         clickCount = 0;
       }
       checkForWin.bind(button)(); // binding button to checkForWin.
@@ -79,22 +95,7 @@ function addMarksToSpecificSpot() {
 }
 addMarksToSpecificSpot();
 
-// func to add the choosen mark :
-function addChoosenMark() {
-  const playerOptionSelect = document.querySelector("#optionSelect");
-  const selectedOption = playerOptionSelect.value;
-  return selectedOption === "Player One"
-    ? playerOne.getMark()
-    : playerTwo.getMark();
-}
-
-// func to get the other player mark :
-function getOtherMark() {
-  return addChoosenMark() === playerOne.getMark()
-    ? playerTwo.getMark()
-    : playerOne.getMark();
-}
-
+// store data for both player :
 let storeDataForX = [];
 let storeDataForO = [];
 
@@ -118,78 +119,59 @@ function checkForWin() {
   function containsAllElements(mainArray, subArray) {
     return subArray.every((elem) => mainArray.includes(elem));
   }
-
+  // check if every element in solution includes the stored data :
   for (const solution of allSolutions) {
     if (containsAllElements(storeDataForX, solution)) {
-      console.log("x wins");
+      showWinner.textContent = `${assignNewPlayers().playerOne.getName()} wins this round! 🥳😎`;
       gameOver();
     } else if (containsAllElements(storeDataForO, solution)) {
-      console.log("o wins");
+      showWinner.textContent = `${assignNewPlayers().playerTwo.getName()} wins this round! 🥳😎`;
       gameOver();
     }
   }
-  console.log(storeDataForX.length);
-  console.log(storeDataForO.length);
 
   // conditon to check for the tie :
   if (storeDataForX.length === 5 || storeDataForO.length === 5) {
-    console.log("its a tie");
+    showWinner.textContent = "Its a Tie! 😤🫡";
   }
 }
 
-// func to stop the end the game :
-// function gameOver() {
-//   const allButtons = document.querySelectorAll("button");
-//   allButtons.forEach((button) => {
-//     button.style.pointerEvents = "none";
-//   });
-// }
+// func to stop the game :
+function gameOver() {
+  const allButtons = document.querySelectorAll("#board-buttons");
+  allButtons.forEach((button) => {
+    button.style.pointerEvents = "none";
+  });
+}
 
-// const test = document.querySelector("#test");
-// const testSelect = document.querySelector("#test-select");
-
-// test.addEventListener("click", function () {
-//   testSelect.style.display = "flex";
-// });
-// console.log("zbe");
-
-// const zbe = document.querySelectorAll("button");
-// console.log(zbe);
-
-// const startGameButton = document.getElementById("start-game-button");
-// const landingPageContainer = document.getElementById("landing-page-container");
-// const gameBoardCotainer = document.getElementById("game-board-container");
-// const backButton = document.getElementById("back-button");
-
-// startGameButton.addEventListener("click", function () {
-//   landingPageContainer.style.display = "none";
-//   gameBoardCotainer.style.display = "block";
-// });
-
-// backButton.addEventListener("click", function () {
-//   landingPageContainer.style.display = "block";
-//   gameBoardCotainer.style.display = "none";
-// });
-
-const startGameButton = document.getElementById("start-game-button");
-const closePopupButton = document.getElementById("close-popup-button");
-const popupOverlay = document.getElementById("popup-overlay");
-const popupWindow = document.getElementById("popup-window");
-const playerOneInput = document.getElementById("player-one-input");
-const playerTwoInput = document.getElementById("player-two-input");
-const playerOneOutput = document.getElementById("player-one-output");
-const playerTwoOutput = document.getElementById("player-two-output");
-
+// start game button event :
 startGameButton.addEventListener("click", () => {
+  // required player names :
+  if (playerOneInput.value == "" || playerTwoInput.value == "") return;
   popupOverlay.style.display = "flex";
   popupWindow.style.display = "flex";
-  console.log(playerOneInput.value);
-  console.log(playerTwoInput.value);
   playerOneOutput.textContent = playerOneInput.value;
   playerTwoOutput.textContent = playerTwoInput.value;
 });
 
-closePopupButton.addEventListener("click", () => {
+// func to delete all data :
+function deleteAllData() {
+  storeDataForX = [];
+  storeDataForO = [];
+  showWinner.textContent = "";
+  const allButtons = document.querySelectorAll("#board-buttons");
+  allButtons.forEach((button) => {
+    button.textContent = "";
+    button.style.pointerEvents = "auto";
+    clickCount = 0;
+  });
+}
+
+// play again button event :
+playAgainButton.addEventListener("click", deleteAllData);
+// close button event :
+closeButton.addEventListener("click", function () {
   popupOverlay.style.display = "none";
   popupWindow.style.display = "none";
+  deleteAllData();
 });
