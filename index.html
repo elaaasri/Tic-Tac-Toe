@@ -1,73 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tic Tac Toe</title>
-    <link
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe</title>
+  <link
     href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Delicious+Handrawn&family=Permanent+Marker&family=Press+Start+2P&family=Sedgwick+Ave+Display&family=Tektur&display=swap"
-    rel="stylesheet"
-    />
-    <script
-    src="https://kit.fontawesome.com/96f630ca48.js"
-    crossorigin="anonymous"
-    ></script>
-    <link rel="stylesheet" href="./style.css">
-    <script src="./script.js" defer></script>
-    <link rel="icon" href="./imgs/tic-tac-toe.png" type="image/png" />
+    rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/96f630ca48.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+  <link rel="icon" href="./imgs/tic-tac-toe.png" type="image/png" />
+</head>
 
-  </head>
-  <body>
-      <h1>Tic Tac Toe</h1>
-      <main>
-        <div id="players-container" >
-          <div id="player-one-container">
-            <label for="player-one-input">Player One</label>
-            <input id="player-one-input" type="text" placeholder="Enter Name :" autocomplete="off"  />
-            <img
-              src="https://i.pinimg.com/originals/35/2a/80/352a80801711e8fc196dd14da26eedaa.gif"
-            />
-            <span>X</span>
-          </div>
-          <span id="vs">VS</span>
-          <div id="player-two-container">
-            <label for="player-two-input">Player Two</label>
-            <input id="player-two-input" type="text" placeholder="Enter Name :" autocomplete="off"/>
-            <img
-              src="https://i.pinimg.com/originals/3f/d2/c0/3fd2c0bf2ddffad1a76cc3f88d213880.gif"
-            />
-            <span>O</span>  
-          </div>
+<body>
+  <h1>Tic Tac Toe</h1>
+  <main>
+    <div id="players-container">
+      <div id="player-one-container">
+        <label for="player-one-input">Player One</label>
+        <input id="player-one-input" type="text" placeholder="Enter Name :" autocomplete="off" />
+        <img src="https://i.pinimg.com/originals/35/2a/80/352a80801711e8fc196dd14da26eedaa.gif" />
+        <span>X</span>
+      </div>
+      <span id="vs">VS</span>
+      <div id="player-two-container">
+        <label for="player-two-input">Player Two</label>
+        <input id="player-two-input" type="text" placeholder="Enter Name :" autocomplete="off" />
+        <img src="https://i.pinimg.com/originals/3f/d2/c0/3fd2c0bf2ddffad1a76cc3f88d213880.gif" />
+        <span>O</span>
+      </div>
+    </div>
+    <!-- start button and pop up window -->
+    <button id="start-game-button">Start Game</button>
+    <button id="playerVsBot-button">Player Vs Bot</button>
+    <div class="overlay" id="popup-overlay" style="display: none; "></div>
+    <div class="popup" id="popup-window" style="display: none;">
+      <div id="players-output-container">
+        <div>
+          <p>player One (X)</p>
+          <p id="player-one-output"></p>
         </div>
-        <!-- start button and pop up window -->
-        <button id="start-game-button">Start Game</button>
-        <div class="overlay" id="popup-overlay" style="display: none; "></div>
-        <div class="popup" id="popup-window" style="display: none;" >
-          <div id="players-output-container">
-            <div>
-              <p>player One (X)</p>
-              <p id="player-one-output"></p>
-            </div>
-            <div>
-              <p>player One (O)</p>
-              <p id="player-two-output"></p>
-            </div>
-          </div>
-          <div id="board-container"></div>
-          <div id="show-winner"></div>
-          <button id="play-again-button">Play Again</button>
-          <button id="close-button">Close</button>
-          </div>
-      </main>
+        <div>
+          <p>player One (O)</p>
+          <p id="player-two-output"></p>
+        </div>
+      </div>
+      <div id="board-container"></div>
+      <div id="show-winner"></div>
+      <button id="play-again-button">Play Again</button>
+      <button id="close-button">Close</button>
+    </div>
+  </main>
 
-      <footer class="footer">
-        Copyright © &nbsp;
-        <p>elaaasri</p>
-        &nbsp; &nbsp;
-        <a href="https://github.com/elaaasri">
-          <i class="fab fa-github"></i>
-        </a>
-      </footer>
+  <footer class="footer">
+    Copyright © &nbsp;
+    <p>elaaasri</p>
+    &nbsp; &nbsp;
+    <a href="https://github.com/elaaasri">
+      <i class="fab fa-github"></i>
+    </a>
+  </footer>
+  <div id="playerVsBot-board-container" style="display: none;"></div>
 
-  </body>
+</body>
 </html>
