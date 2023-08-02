@@ -1,15 +1,3 @@
-// DOM elements :
-const startGameButton = document.getElementById("start-game-button");
-const popupOverlay = document.getElementById("popup-overlay");
-const popupWindow = document.getElementById("popup-window");
-const playerOneInput = document.getElementById("player-one-input");
-const playerTwoInput = document.getElementById("player-two-input");
-const playerOneOutput = document.getElementById("player-one-output");
-const playerTwoOutput = document.getElementById("player-two-output");
-const playAgainButton = document.getElementById("play-again-button");
-const showWinner = document.getElementById("show-winner");
-const closeButton = document.getElementById("close-button");
-
 const GameBoard = (function () {
   const boardData = [];
 
@@ -50,19 +38,33 @@ const GameBoard = (function () {
       buttonsContainer.appendChild(button);
       button.setAttribute("data-value", data);
       // player vs bot container :
-      const playerVsBotButtonsContainer = document.querySelector(
-        "#playerVsBot-board-container"
-      );
-      const playerVsBotButton = document.createElement("button");
-      playerVsBotButton.id = "playerVsBot-board-buttons";
-      playerVsBotButtonsContainer.appendChild(playerVsBotButton);
-      playerVsBotButton.setAttribute("data-value", data);
+      // const playerVsBotButtonsContainer = document.querySelector(
+      //   "#playerVsBot-board-container"
+      // );
+      // const playerVsBotButton = document.createElement("button");
+      // playerVsBotButton.id = "playerVsBot-board-buttons";
+      // playerVsBotButtonsContainer.appendChild(playerVsBotButton);
+
+      // playerVsBotButton.setAttribute("data-value", data);
     });
   }
   displayTheBoardAndSetsItsData();
 
   return { storeRowsAndColumns, boardData };
 })();
+
+// DOM elements :
+const startGameButton = document.getElementById("start-game-button");
+const popupOverlay = document.getElementById("popup-overlay");
+const popupWindow = document.getElementById("popup-window");
+const playerOneInput = document.getElementById("player-one-input");
+const playerTwoInput = document.getElementById("player-two-input");
+const playerOneOutput = document.getElementById("player-one-output");
+const playerTwoOutput = document.getElementById("player-two-output");
+const playAgainButton = document.getElementById("play-again-button");
+const showWinner = document.getElementById("show-winner");
+const closeButton = document.getElementById("close-button");
+const allButtons = document.querySelectorAll("#board-buttons");
 
 // factory func to create new players :
 function playersFactory(name, mark) {
@@ -79,13 +81,13 @@ function playersFactory(name, mark) {
 function assignNewPlayers() {
   const playerOne = playersFactory(playerOneInput.value, "X");
   const playerTwo = playersFactory(playerTwoInput.value, "O");
-  return { playerOne, playerTwo };
+  const computerPlayer = playersFactory("Computer", "🤖");
+  return { playerOne, playerTwo, computerPlayer };
 }
 
 // func to add a specific mark to the specific button :
 let clickCount = 0;
 function addMarksToSpecificSpot() {
-  const allButtons = document.querySelectorAll("#board-buttons");
   allButtons.forEach((button) =>
     button.addEventListener("click", function () {
       // stops players from playing in spots that already taken :
@@ -102,15 +104,15 @@ function addMarksToSpecificSpot() {
     })
   );
 }
-// addMarksToSpecificSpot();
 
-// store data for both player :
+// store data for both players :
 let storeDataForX = [];
 let storeDataForO = [];
 
+// func to declare the winner :
 function checkForWin() {
   // declare variables :
-  const button = button;
+  const button = this;
   const buttonData = Number(button.getAttribute("data-value"));
   const allRows = GameBoard.storeRowsAndColumns().rows;
   const allColumns = GameBoard.storeRowsAndColumns().columns;
@@ -147,7 +149,6 @@ function checkForWin() {
 
 // func to stop the game :
 function gameOver() {
-  const allButtons = document.querySelectorAll("#board-buttons");
   allButtons.forEach((button) => {
     button.style.pointerEvents = "none";
   });
@@ -157,11 +158,17 @@ function gameOver() {
 function startPlayerVsPlayerGame() {
   // required player names :
   if (playerOneInput.value == "" || playerTwoInput.value == "") return;
+  // display the pop up :
   popupOverlay.style.display = "flex";
   popupWindow.style.display = "flex";
+  // sets name players  to the pop up :
   playerOneOutput.textContent = playerOneInput.value;
   playerTwoOutput.textContent = playerTwoInput.value;
-  addMarksToSpecificSpot();
+
+  allButtons.forEach((button) => {
+    button.removeEventListener("click", addMarksToSpecificSpotForPlayerVsBot);
+    button.addEventListener("click", addMarksToSpecificSpot);
+  });
 }
 // start game button event :
 startGameButton.addEventListener("click", startPlayerVsPlayerGame);
@@ -170,12 +177,11 @@ startGameButton.addEventListener("click", startPlayerVsPlayerGame);
 function deleteAllData() {
   storeDataForX = [];
   storeDataForO = [];
+  clickCount = 0;
   showWinner.textContent = "";
-  const allButtons = document.querySelectorAll("#board-buttons");
   allButtons.forEach((button) => {
     button.textContent = "";
     button.style.pointerEvents = "auto";
-    clickCount = 0;
   });
 }
 
@@ -188,87 +194,45 @@ closeButton.addEventListener("click", function () {
   deleteAllData();
 });
 
-// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+// ############# PLAYER VS COMPUTER SCRIPT ############# :
 const playerVsBotButton = document.getElementById("playerVsBot-button");
+// const allButtonsForPlayervsBot = document.querySelectorAll("#board-buttons");
+// const playerVsBotButtonsContainer = document.getElementById(
+//   "playerVsBot-board-container"
+// );
 // func to start player vs bot game :
 function startPlayerVsBotGame() {
-  const playerVsBotButtonsContainer = document.getElementById(
-    "playerVsBot-board-container"
-  );
-  playerVsBotButtonsContainer.style = "display : grid";
+  // playerVsBotButtonsContainer.style = "display : grid";
+  popupOverlay.style.display = "flex";
+  popupWindow.style.display = "flex";
   addMarksToSpecificSpotForPlayerVsBot();
 }
+// start game button event :
 playerVsBotButton.addEventListener("click", startPlayerVsBotGame);
 
-const allButtonsForPlayervsBot = document.querySelectorAll(
-  "#playerVsBot-board-buttons"
-);
-
-// func to return random button :
+// func that return an available random button :
 function getRandomButton() {
-  let randomChoice = Math.floor(
-    Math.random() * allButtonsForPlayervsBot.length
-  );
-  let randomButton = allButtonsForPlayervsBot[randomChoice];
-  return randomButton;
+  let availableButtons = [];
+  let randomChoice = Math.floor(Math.random() * availableButtons.length);
+  allButtons.forEach((button) => {
+    if (button.textContent === "") {
+      availableButtons.push(button);
+    }
+  });
+  return availableButtons[randomChoice];
 }
 
+// // func to add a specific mark to the specific button :
 function addMarksToSpecificSpotForPlayerVsBot() {
-  allButtonsForPlayervsBot.forEach((button) => {
+  allButtons.forEach((button) => {
     button.addEventListener("click", function () {
-      // get ranodm button :
-      let randomChoice = Math.floor(
-        Math.random() * allButtonsForPlayervsBot.length
-      );
-      let randomButton = allButtonsForPlayervsBot[randomChoice];
-
+      // player turn :
       if (button.textContent != "") return;
-      if (randomButton.textContent != "") {
-        console.log("random place taken");
-        button.textContent = "X";
-        if (getRandomEmptyButton().length > 0) {
-          getRandomEmptyButton()[0].textContent = "test";
-        }
-        return;
-      } else if (button === randomButton) {
-        console.log("=");
-        button.textContent = "X";
-        if (getRandomEmptyButton().length > 0) {
-          getRandomEmptyButton()[0].textContent = "test2";
-        }
-        return;
-      } else {
-        button.textContent = "X";
-        randomButton.textContent = "O";
-      }
+      button.textContent = assignNewPlayers().playerOne.getMark();
+      // computer turn :
+      if (getRandomButton() === undefined) return;
+      getRandomButton().textContent =
+        assignNewPlayers().computerPlayer.getMark();
     });
   });
 }
-
-function getRandomEmptyButton() {
-  let randomEmptybuttonArr = [];
-  allButtonsForPlayervsBot.forEach((element) => {
-    if (element.textContent == "") {
-      randomEmptybuttonArr.push(element);
-    }
-  });
-  return randomEmptybuttonArr;
-}
-// console.log(getRandomEmptyButton());
-// if (button.textContent != "") {
-//   return;
-// } else if (randomButton.textContent != "") {
-//   console.log("taken");
-//   if (button.textContent != "") {
-//     return;
-//   } else {
-//     button.textContent = "X";
-//     getRandomButton().textContent = "O";
-//   }
-//   // randomButton.textContent = "O";
-// } else if (randomButton == button) {
-//   console.log("=");
-// } else {
-//   button.textContent = "X";
-//   randomButton.textContent = "O";
-// }
