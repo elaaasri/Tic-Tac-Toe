@@ -49,9 +49,8 @@
           <span>O</span>
         </div>
       </div>
-      <!-- start button and pop up window -->
+      <!-- start button and pop up window for player vs player mode -->
       <button id="start-game-button">Start Game</button>
-      <button id="playerVsBot-button">Player Vs Bot</button>
       <div class="overlay" id="popup-overlay" style="display: none"></div>
       <div class="popup" id="popup-window" style="display: none">
         <div id="players-output-container">
@@ -65,11 +64,29 @@
           </div>
         </div>
         <div id="board-container"></div>
-        <!-- <div id="playerVsBot-board-container" style="display: none"></div> -->
         <div id="show-winner"></div>
         <button id="play-again-button">Play Again</button>
         <button id="close-button">Close</button>
       </div>
+
+      <!-- start button and pop up window for player vs computer mode -->
+      <button id="start-game-button-PvBot">Player Vs Bot</button>
+      <div class="overlay-PvBot" id="popup-overlay-PvBot" style="display: none"></div>
+      <div class="popup-PvBot" id="popup-window-PvBot" style="display: none">
+        <div id="players-output-container">
+          <div>
+            <p>player One (X)</p>
+          </div>
+          <div>
+            <p>Computer ( 🤖 )</p>
+          </div>
+        </div>
+        <div id="PvBot-board-container"></div>
+        <!-- <div id="show-winner">wins</div> -->
+        <button id="play-again-button-PvBot">Play Again</button>
+        <button id="close-button-PvBot">Close</button>
+      </div>
+
     </main>
 
     <footer class="footer">

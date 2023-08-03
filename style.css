@@ -61,7 +61,8 @@ img {
   height: 230px;
 }
 /* start button and pop up windon styles */
-#start-game-button {
+#start-game-button,
+#start-game-button-PvBot {
   width: 120px;
   height: 35px;
   border-radius: 20px;
@@ -72,10 +73,12 @@ img {
   transition: background-color 0.4s ease;
   margin-bottom: 30px;
 }
-#start-game-button:hover {
+#start-game-button:hover,
+#start-game-button-PvBot:hover {
   background-color: rgb(12, 57, 147);
 }
-.overlay {
+.overlay,
+.overlay-PvBot {
   position: fixed;
   top: 0;
   left: 0;
@@ -83,7 +86,8 @@ img {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.popup {
+.popup,
+.popup-PvBot {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -110,7 +114,7 @@ img {
 }
 /* board styles */
 #board-container,
-#playerVsBot-board-container {
+#PvBot-board-container {
   border: black solid 1px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -122,7 +126,7 @@ img {
   box-shadow: 3px 5px 5px 0px white;
 }
 #board-buttons,
-#playerVsBot-board-buttons {
+#PvBot-board-buttons {
   background-color: rgb(107, 28, 186);
   height: 80px;
   width: 80px;
@@ -134,7 +138,9 @@ img {
 }
 /* play again button styles */
 #play-again-button,
-#close-button {
+#play-again-button-PvBot,
+#close-button,
+#close-button-PvBot {
   align-self: center;
   width: 100px;
   height: 30px;
@@ -146,7 +152,9 @@ img {
   transition: background-color 0.4s ease;
 }
 #play-again-button:hover,
-#close-button:hover {
+#play-again-button-PvBot:hover,
+#close-button:hover,
+#close-button-PvBot:hover {
   background-color: rgb(12, 57, 147);
 }
 #show-winner {

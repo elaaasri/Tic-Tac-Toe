@@ -29,31 +29,37 @@ const GameBoard = (function () {
   storeRowsAndColumns();
 
   // func to create the board and sets data value for each button :
-  function displayTheBoardAndSetsItsData() {
+  function createBoardAndSetsDataPvP() {
     boardData.forEach((data) => {
-      // player vs player contaner :
+      // PvP mode container :
       const buttonsContainer = document.querySelector("#board-container");
       const button = document.createElement("button");
       button.id = "board-buttons";
       buttonsContainer.appendChild(button);
       button.setAttribute("data-value", data);
-      // player vs bot container :
-      // const playerVsBotButtonsContainer = document.querySelector(
-      //   "#playerVsBot-board-container"
-      // );
-      // const playerVsBotButton = document.createElement("button");
-      // playerVsBotButton.id = "playerVsBot-board-buttons";
-      // playerVsBotButtonsContainer.appendChild(playerVsBotButton);
-
-      // playerVsBotButton.setAttribute("data-value", data);
     });
   }
-  displayTheBoardAndSetsItsData();
+  createBoardAndSetsDataPvP();
+
+  function createBoardAndSetsDataPvBot() {
+    boardData.forEach((data) => {
+      // PvBot container :
+      const PvBotButtonsContainer = document.querySelector(
+        "#PvBot-board-container"
+      );
+      const PvBotButton = document.createElement("button");
+      PvBotButton.id = "PvBot-board-buttons";
+      PvBotButtonsContainer.appendChild(PvBotButton);
+      PvBotButton.setAttribute("data-value", data);
+    });
+  }
+  createBoardAndSetsDataPvBot();
 
   return { storeRowsAndColumns, boardData };
 })();
 
-// DOM elements :
+// ############# PLAYER VS PLAYER MODE ############# :
+// DOM elements for PvP mode :
 const startGameButton = document.getElementById("start-game-button");
 const popupOverlay = document.getElementById("popup-overlay");
 const popupWindow = document.getElementById("popup-window");
@@ -64,7 +70,7 @@ const playerTwoOutput = document.getElementById("player-two-output");
 const playAgainButton = document.getElementById("play-again-button");
 const showWinner = document.getElementById("show-winner");
 const closeButton = document.getElementById("close-button");
-const allButtons = document.querySelectorAll("#board-buttons");
+const allButtonsPvP = document.querySelectorAll("#board-buttons");
 
 // factory func to create new players :
 function playersFactory(name, mark) {
@@ -85,25 +91,36 @@ function assignNewPlayers() {
   return { playerOne, playerTwo, computerPlayer };
 }
 
-// func to add a specific mark to the specific button :
-let clickCount = 0;
-function addMarksToSpecificSpot() {
-  allButtons.forEach((button) =>
+// func to add a specific mark to the specific button PvP mode:
+let currentPlayer = "playerOne";
+function addMarksToSpecificSpotPvP() {
+  // required player names :
+  if (playerOneInput.value == "" || playerTwoInput.value == "") return;
+  // display the PvP pop up :
+  popupOverlay.style.display = "flex";
+  popupWindow.style.display = "flex";
+  // sets name players to the pop up :
+  playerOneOutput.textContent = playerOneInput.value;
+  playerTwoOutput.textContent = playerTwoInput.value;
+  // add marks :
+  allButtonsPvP.forEach((button) =>
     button.addEventListener("click", function () {
       // stops players from playing in spots that already taken :
       if (button.textContent != "") return;
       // display the mark on the specific spot :
-      if (clickCount === 0) {
+      if (currentPlayer === "playerOne") {
         button.textContent = assignNewPlayers().playerOne.getMark();
-        clickCount++;
-      } else if (clickCount === 1) {
+        currentPlayer = "playerTwo";
+      } else if (currentPlayer === "playerTwo") {
         button.textContent = assignNewPlayers().playerTwo.getMark();
-        clickCount = 0;
+        currentPlayer = "playerOne";
       }
       checkForWin.bind(button)(); // binding button to checkForWin.
     })
   );
 }
+// start game button event :
+startGameButton.addEventListener("click", addMarksToSpecificSpotPvP);
 
 // store data for both players :
 let storeDataForX = [];
@@ -149,37 +166,18 @@ function checkForWin() {
 
 // func to stop the game :
 function gameOver() {
-  allButtons.forEach((button) => {
+  allButtonsPvP.forEach((button) => {
     button.style.pointerEvents = "none";
   });
 }
-
-// func to start player vs player game :
-function startPlayerVsPlayerGame() {
-  // required player names :
-  if (playerOneInput.value == "" || playerTwoInput.value == "") return;
-  // display the pop up :
-  popupOverlay.style.display = "flex";
-  popupWindow.style.display = "flex";
-  // sets name players  to the pop up :
-  playerOneOutput.textContent = playerOneInput.value;
-  playerTwoOutput.textContent = playerTwoInput.value;
-
-  allButtons.forEach((button) => {
-    button.removeEventListener("click", addMarksToSpecificSpotForPlayerVsBot);
-    button.addEventListener("click", addMarksToSpecificSpot);
-  });
-}
-// start game button event :
-startGameButton.addEventListener("click", startPlayerVsPlayerGame);
 
 // func to delete all data :
 function deleteAllData() {
   storeDataForX = [];
   storeDataForO = [];
-  clickCount = 0;
+  clickCount = "playerOne";
   showWinner.textContent = "";
-  allButtons.forEach((button) => {
+  [...allButtonsPvP, ...allButtonsPvBot].forEach((button) => {
     button.textContent = "";
     button.style.pointerEvents = "auto";
   });
@@ -188,33 +186,32 @@ function deleteAllData() {
 // play again button event :
 playAgainButton.addEventListener("click", deleteAllData);
 // close button event :
-closeButton.addEventListener("click", function () {
+closeButton.addEventListener("click", closePopUpWindow);
+
+// func to close the pop up window for both modes :
+function closePopUpWindow() {
   popupOverlay.style.display = "none";
   popupWindow.style.display = "none";
+  popupOverlayPvBot.style.display = "none";
+  popupWindowPvBot.style.display = "none";
   deleteAllData();
-});
-
-// ############# PLAYER VS COMPUTER SCRIPT ############# :
-const playerVsBotButton = document.getElementById("playerVsBot-button");
-// const allButtonsForPlayervsBot = document.querySelectorAll("#board-buttons");
-// const playerVsBotButtonsContainer = document.getElementById(
-//   "playerVsBot-board-container"
-// );
-// func to start player vs bot game :
-function startPlayerVsBotGame() {
-  // playerVsBotButtonsContainer.style = "display : grid";
-  popupOverlay.style.display = "flex";
-  popupWindow.style.display = "flex";
-  addMarksToSpecificSpotForPlayerVsBot();
 }
-// start game button event :
-playerVsBotButton.addEventListener("click", startPlayerVsBotGame);
+
+// ############# PLAYER VS COMPUTER MODE ############# :
+// DOM elements for PvBot :
+const startGameButtonPvBot = document.getElementById("start-game-button-PvBot");
+const allButtonsPvBot = document.querySelectorAll("#PvBot-board-buttons");
+const PvBotButtonsContainer = document.querySelector("#PvBot-board-container");
+const popupOverlayPvBot = document.getElementById("popup-overlay-PvBot");
+const popupWindowPvBot = document.getElementById("popup-window-PvBot");
+const playAgainButtonPvBot = document.getElementById("play-again-button-PvBot");
+const closeButtonPvBot = document.getElementById("close-button-PvBot");
 
 // func that return an available random button :
 function getRandomButton() {
   let availableButtons = [];
   let randomChoice = Math.floor(Math.random() * availableButtons.length);
-  allButtons.forEach((button) => {
+  allButtonsPvBot.forEach((button) => {
     if (button.textContent === "") {
       availableButtons.push(button);
     }
@@ -223,8 +220,12 @@ function getRandomButton() {
 }
 
 // // func to add a specific mark to the specific button :
-function addMarksToSpecificSpotForPlayerVsBot() {
-  allButtons.forEach((button) => {
+function addMarksToSpecificSpotForPvBot() {
+  // display the PvBot pop up :
+  popupOverlayPvBot.style.display = "flex";
+  popupWindowPvBot.style.display = "flex";
+  // add marks :
+  allButtonsPvBot.forEach((button) => {
     button.addEventListener("click", function () {
       // player turn :
       if (button.textContent != "") return;
@@ -236,3 +237,11 @@ function addMarksToSpecificSpotForPlayerVsBot() {
     });
   });
 }
+// start game button event :
+startGameButtonPvBot.addEventListener("click", addMarksToSpecificSpotForPvBot);
+
+// play again button event :
+playAgainButtonPvBot.addEventListener("click", deleteAllData);
+
+// close button event :
+closeButtonPvBot.addEventListener("click", closePopUpWindow);
