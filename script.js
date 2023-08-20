@@ -14,6 +14,7 @@ const GameBoard = (function () {
       [4, 5, 6],
       [7, 8, 9],
     ];
+
     for (let i in my2DArray) {
       rows.push(my2DArray[i]);
       for (let j in my2DArray[i]) {
@@ -43,7 +44,7 @@ const GameBoard = (function () {
 
   function createBoardAndSetsDataPvBot() {
     boardData.forEach((data) => {
-      // PvBot container :
+      // PvBot mode container :
       const PvBotButtonsContainer = document.querySelector(
         "#PvBot-board-container"
       );
@@ -95,7 +96,10 @@ function assignNewPlayers() {
 let currentPlayer = "playerOne";
 function addMarksToSpecificSpotPvP() {
   // required player names :
-  if (playerOneInput.value == "" || playerTwoInput.value == "") return;
+  if (playerOneInput.value == "" || playerTwoInput.value == "") {
+    alert("Must Enter Names!");
+    return;
+  }
   // display the PvP pop up :
   popupOverlay.style.display = "flex";
   popupWindow.style.display = "flex";
@@ -175,7 +179,7 @@ function gameOver() {
 function deleteAllData() {
   storeDataForX = [];
   storeDataForO = [];
-  clickCount = "playerOne";
+  currentPlayer = "playerOne";
   showWinner.textContent = "";
   [...allButtonsPvP, ...allButtonsPvBot].forEach((button) => {
     button.textContent = "";
@@ -208,14 +212,14 @@ const playAgainButtonPvBot = document.getElementById("play-again-button-PvBot");
 const closeButtonPvBot = document.getElementById("close-button-PvBot");
 
 // func that return an available random button :
-function getRandomButton() {
+function getAvailableRandomButton() {
   let availableButtons = [];
-  let randomChoice = Math.floor(Math.random() * availableButtons.length);
   allButtonsPvBot.forEach((button) => {
     if (button.textContent === "") {
       availableButtons.push(button);
     }
   });
+  let randomChoice = Math.floor(Math.random() * availableButtons.length);
   return availableButtons[randomChoice];
 }
 
@@ -231,9 +235,10 @@ function addMarksToSpecificSpotForPvBot() {
       if (button.textContent != "") return;
       button.textContent = assignNewPlayers().playerOne.getMark();
       // computer turn :
-      if (getRandomButton() === undefined) return;
-      getRandomButton().textContent =
+      if (getAvailableRandomButton() === undefined) return;
+      getAvailableRandomButton().textContent =
         assignNewPlayers().computerPlayer.getMark();
+      checkForWinPvBot.bind(button)(); // binding button to checkForWin.
     });
   });
 }
@@ -245,3 +250,84 @@ playAgainButtonPvBot.addEventListener("click", deleteAllData);
 
 // close button event :
 closeButtonPvBot.addEventListener("click", closePopUpWindow);
+
+// func to declare the winner :
+function checkForWinPvBot() {
+  // declare variables :
+  const button = this;
+
+  console.log(button);
+  const buttonData = Number(button.getAttribute("data-value"));
+  const allRows = GameBoard.storeRowsAndColumns().rows;
+  const allColumns = GameBoard.storeRowsAndColumns().columns;
+  const allDiagonals = GameBoard.storeRowsAndColumns().diagonals;
+  const allSolutions = [...allRows, ...allColumns, ...allDiagonals];
+
+  // conditon to store data for each player :
+  if (button.textContent === "X") {
+    storeDataForX.push(buttonData);
+  } else if (button.textContent === "O") {
+    storeDataForO.push(buttonData);
+  }
+
+  // func to check if an array contains all elements of another array :
+  function containsAllElements(mainArray, subArray) {
+    return subArray.every((elem) => mainArray.includes(elem));
+  }
+  // check if every element in solution includes the stored data :
+  for (const solution of allSolutions) {
+    if (containsAllElements(storeDataForX, solution)) {
+      showWinner.textContent = `${assignNewPlayers().playerOne.getName()} wins button round! 🥳😎`;
+      gameOver();
+    } else if (containsAllElements(storeDataForO, solution)) {
+      showWinner.textContent = `${assignNewPlayers().playerTwo.getName()} wins button round! 🥳😎`;
+      gameOver();
+    }
+  }
+
+  // conditon to check for the tie :
+  if (storeDataForX.length === 5 || storeDataForO.length === 5) {
+    showWinner.textContent = "Its a Tie! 😤🫡";
+  }
+}
+
+function minimax(node, depth, maximizingPlayer) {
+  if (depth === 0 || isTerminalNode(node)) {
+    return evaluate(node); // You need to implement the evaluate function for heuristic value
+  }
+
+  if (maximizingPlayer) {
+    let value = -Infinity;
+    for (let child of node.children) {
+      value = Math.max(value, minimax(child, depth - 1, false));
+    }
+    return value;
+  } else {
+    let value = Infinity;
+    for (let child of node.children) {
+      value = Math.min(value, minimax(child, depth - 1, true));
+    }
+    return value;
+  }
+}
+
+// function isTerminalNode(node) {
+//   // Implement this function to check if the node is a terminal state
+// }
+
+// function evaluate(node) {
+//   // Implement this function to return the heuristic value of the node
+// }
+
+// // Example usage
+// let rootNode = {
+//   children: [
+//       /* Define the child nodes here */
+//   ]
+// };
+
+// let depth = /* Set the desired depth */;
+// let maximizingPlayer = /* Set whether it's the maximizing player's turn */;
+
+// let bestValue = minimax(rootNode, depth, maximizingPlayer);
+// console.log('Best value:', bestValue);
