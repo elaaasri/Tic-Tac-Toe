@@ -42,20 +42,6 @@ const GameBoard = (function () {
   }
   createBoardAndSetsDataPvP();
 
-  function createBoardAndSetsDataPvBot() {
-    boardData.forEach((data) => {
-      // PvBot mode container :
-      const PvBotButtonsContainer = document.querySelector(
-        "#PvBot-board-container"
-      );
-      const PvBotButton = document.createElement("button");
-      PvBotButton.id = "PvBot-board-buttons";
-      PvBotButtonsContainer.appendChild(PvBotButton);
-      PvBotButton.setAttribute("data-value", data);
-    });
-  }
-  createBoardAndSetsDataPvBot();
-
   return { storeRowsAndColumns, boardData };
 })();
 
@@ -88,8 +74,7 @@ function playersFactory(name, mark) {
 function assignNewPlayers() {
   const playerOne = playersFactory(playerOneInput.value, "X");
   const playerTwo = playersFactory(playerTwoInput.value, "O");
-  const computerPlayer = playersFactory("Computer", "🤖");
-  return { playerOne, playerTwo, computerPlayer };
+  return { playerOne, playerTwo };
 }
 
 // func to add a specific mark to the specific button PvP mode:
@@ -181,7 +166,7 @@ function deleteAllData() {
   storeDataForO = [];
   currentPlayer = "playerOne";
   showWinner.textContent = "";
-  [...allButtonsPvP, ...allButtonsPvBot].forEach((button) => {
+  allButtonsPvP.forEach((button) => {
     button.textContent = "";
     button.style.pointerEvents = "auto";
   });
@@ -196,138 +181,5 @@ closeButton.addEventListener("click", closePopUpWindow);
 function closePopUpWindow() {
   popupOverlay.style.display = "none";
   popupWindow.style.display = "none";
-  popupOverlayPvBot.style.display = "none";
-  popupWindowPvBot.style.display = "none";
   deleteAllData();
 }
-
-// ############# PLAYER VS COMPUTER MODE ############# :
-// DOM elements for PvBot :
-const startGameButtonPvBot = document.getElementById("start-game-button-PvBot");
-const allButtonsPvBot = document.querySelectorAll("#PvBot-board-buttons");
-const PvBotButtonsContainer = document.querySelector("#PvBot-board-container");
-const popupOverlayPvBot = document.getElementById("popup-overlay-PvBot");
-const popupWindowPvBot = document.getElementById("popup-window-PvBot");
-const playAgainButtonPvBot = document.getElementById("play-again-button-PvBot");
-const closeButtonPvBot = document.getElementById("close-button-PvBot");
-
-// func that return an available random button :
-function getAvailableRandomButton() {
-  let availableButtons = [];
-  allButtonsPvBot.forEach((button) => {
-    if (button.textContent === "") {
-      availableButtons.push(button);
-    }
-  });
-  let randomChoice = Math.floor(Math.random() * availableButtons.length);
-  return availableButtons[randomChoice];
-}
-
-// // func to add a specific mark to the specific button :
-function addMarksToSpecificSpotForPvBot() {
-  // display the PvBot pop up :
-  popupOverlayPvBot.style.display = "flex";
-  popupWindowPvBot.style.display = "flex";
-  // add marks :
-  allButtonsPvBot.forEach((button) => {
-    button.addEventListener("click", function () {
-      // player turn :
-      if (button.textContent != "") return;
-      button.textContent = assignNewPlayers().playerOne.getMark();
-      // computer turn :
-      if (getAvailableRandomButton() === undefined) return;
-      getAvailableRandomButton().textContent =
-        assignNewPlayers().computerPlayer.getMark();
-      checkForWinPvBot.bind(button)(); // binding button to checkForWin.
-    });
-  });
-}
-// start game button event :
-startGameButtonPvBot.addEventListener("click", addMarksToSpecificSpotForPvBot);
-
-// play again button event :
-playAgainButtonPvBot.addEventListener("click", deleteAllData);
-
-// close button event :
-closeButtonPvBot.addEventListener("click", closePopUpWindow);
-
-// func to declare the winner :
-function checkForWinPvBot() {
-  // declare variables :
-  const button = this;
-
-  console.log(button);
-  const buttonData = Number(button.getAttribute("data-value"));
-  const allRows = GameBoard.storeRowsAndColumns().rows;
-  const allColumns = GameBoard.storeRowsAndColumns().columns;
-  const allDiagonals = GameBoard.storeRowsAndColumns().diagonals;
-  const allSolutions = [...allRows, ...allColumns, ...allDiagonals];
-
-  // conditon to store data for each player :
-  if (button.textContent === "X") {
-    storeDataForX.push(buttonData);
-  } else if (button.textContent === "O") {
-    storeDataForO.push(buttonData);
-  }
-
-  // func to check if an array contains all elements of another array :
-  function containsAllElements(mainArray, subArray) {
-    return subArray.every((elem) => mainArray.includes(elem));
-  }
-  // check if every element in solution includes the stored data :
-  for (const solution of allSolutions) {
-    if (containsAllElements(storeDataForX, solution)) {
-      showWinner.textContent = `${assignNewPlayers().playerOne.getName()} wins button round! 🥳😎`;
-      gameOver();
-    } else if (containsAllElements(storeDataForO, solution)) {
-      showWinner.textContent = `${assignNewPlayers().playerTwo.getName()} wins button round! 🥳😎`;
-      gameOver();
-    }
-  }
-
-  // conditon to check for the tie :
-  if (storeDataForX.length === 5 || storeDataForO.length === 5) {
-    showWinner.textContent = "Its a Tie! 😤🫡";
-  }
-}
-
-function minimax(node, depth, maximizingPlayer) {
-  if (depth === 0 || isTerminalNode(node)) {
-    return evaluate(node); // You need to implement the evaluate function for heuristic value
-  }
-
-  if (maximizingPlayer) {
-    let value = -Infinity;
-    for (let child of node.children) {
-      value = Math.max(value, minimax(child, depth - 1, false));
-    }
-    return value;
-  } else {
-    let value = Infinity;
-    for (let child of node.children) {
-      value = Math.min(value, minimax(child, depth - 1, true));
-    }
-    return value;
-  }
-}
-
-// function isTerminalNode(node) {
-//   // Implement this function to check if the node is a terminal state
-// }
-
-// function evaluate(node) {
-//   // Implement this function to return the heuristic value of the node
-// }
-
-// // Example usage
-// let rootNode = {
-//   children: [
-//       /* Define the child nodes here */
-//   ]
-// };
-
-// let depth = /* Set the desired depth */;
-// let maximizingPlayer = /* Set whether it's the maximizing player's turn */;
-
-// let bestValue = minimax(rootNode, depth, maximizingPlayer);
-// console.log('Best value:', bestValue);
