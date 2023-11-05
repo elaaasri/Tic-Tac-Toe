@@ -139,10 +139,10 @@ function checkForWin() {
   // check if every element in solution includes the stored data :
   for (const solution of allSolutions) {
     if (containsAllElements(storeDataForX, solution)) {
-      showWinner.textContent = `${assignNewPlayers().playerOne.getName()} wins button round! 🥳😎`;
+      showWinner.textContent = `${assignNewPlayers().playerOne.getName()} wins this round! 🥳😎`;
       gameOver();
     } else if (containsAllElements(storeDataForO, solution)) {
-      showWinner.textContent = `${assignNewPlayers().playerTwo.getName()} wins button round! 🥳😎`;
+      showWinner.textContent = `${assignNewPlayers().playerTwo.getName()} wins this round! 🥳😎`;
       gameOver();
     }
   }
